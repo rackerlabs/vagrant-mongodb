@@ -15,6 +15,10 @@ Vagrant.configure('2') do |config|
   # https://github.com/mitchellh/vagrant/issues/1482 for details.
   config.ssh.pty = true
 
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+  end
+
   ### RAX provider settings
   config.vm.provider :rackspace do |rs, override|
     # Overrides should be avoided, we have no choice here :(
@@ -91,11 +95,23 @@ Vagrant.configure('2') do |config|
   # See http://docs.mongodb.org/manual/administration/production-notes/ for
   # details.
   config.vm.provision :chef_solo do |chef|
-    #chef.add_recipe 'yum'
+    puts ENV['VAGRANT_DEFAULT_PROVIDER']
+    puts "Vagrant provider"
+    if ENV['VAGRANT_DEFAULT_PROVIDER'] == :rackspace
+        puts "Loading Rackspace specific recipes"
+        chef.add_recipe 'rackspace'
+        chef.add_recipe 'utils'
+        chef.add_recipe 'mongodb::10gen_repo'
+        chef.add_recipe 'mongodb'
+    end
+
+    if ENV['VAGRANT_DEFAULT_PROVIDER'] == :aws
+        chef.add_recipe 'ebs'
+    end
+
     chef.add_recipe 'yum-epel'
     chef.add_recipe 'utils'
-    #chef.add_recipe 'mosh'
-   # chef.add_recipe 'ebs'
+    chef.add_recipe 'rackspace'
     chef.add_recipe 'mongodb::10gen_repo'
     chef.add_recipe 'mongodb'
 
