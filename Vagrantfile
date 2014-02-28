@@ -2,12 +2,31 @@ Vagrant.configure('2') do |config|
   config.vm.box     = 'dummy'
   config.vm.box_url = 'https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box'
 
-  config.berkshelf.enabled    = true
+  # Librarian-Chef is in use, add a reminder
+  Vagrant.require_plugin 'vagrant-librarian-chef'
+  Vagrant.require_plugin 'vagrant-omnibus'
+
   config.omnibus.chef_version = :latest
 
   # Workaround for "sudo: sorry, you must have a tty to run sudo" error. See
   # https://github.com/mitchellh/vagrant/issues/1482 for details.
   config.ssh.pty = true
+
+  ### RAX provider settings
+  config.vm.provider :rackspace do |rs, override|
+    # Overrides should be avoided, we have no choice here :(
+    override.vm.box = 'dummy'
+
+    # Authentication creds, server details, etc.
+    rs.username = 'testuser'
+    rs.api_key = 'testkey'
+    rs.rackspace_region = 'lon'
+    rs.server_name = config.vm.hostname
+    rs.flavor = /1 GB Performance/
+    rs.image = /Ubuntu 12.04 LTS/
+    rs.disk_config = 'MANUAL'
+    rs.key_name = 'rax'
+  end
 
   config.vm.provider :aws do |aws, override|
     # Workaround for "~/aws/keys/#{aws.region}/#{ENV['USER']}.pem", which for
