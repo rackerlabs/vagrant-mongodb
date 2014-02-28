@@ -37,12 +37,6 @@ cookbook_file 'public_ip' do
   mode  '0755'
 end
 
-file "/etc/motd.tail" do
-    content "\n -- Instance provided by Rackspace --\n"
-    mode "077"
-    action :create
-end
-
 directory "/data" do
     owner "root"
     group "root"
