@@ -1,0 +1,6 @@
+name             "rackspacelogo"
+maintainer       "Marc Cluet"
+maintainer_email "marc.cluet@rackspace.com"
+description      "Rackspace Logo"
+version          "0.0.1"
+license          "Apache2"
