@@ -7,4 +7,4 @@ cookbook "mosh",
     :git => "git://github.com/jtimberman/mosh-cookbook"
 cookbook "utils",
     :path => "my_cookbooks/utils"
-cookbook "yum"
+cookbook "yum-epel"
