@@ -1,6 +1,9 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
 Vagrant.configure('2') do |config|
   config.vm.box     = 'dummy'
-  config.vm.box_url = 'https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box'
+#  config.vm.box_url = 'https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box'
 
   # Librarian-Chef is in use, add a reminder
   Vagrant.require_plugin 'vagrant-librarian-chef'
@@ -16,16 +19,22 @@ Vagrant.configure('2') do |config|
   config.vm.provider :rackspace do |rs, override|
     # Overrides should be avoided, we have no choice here :(
     override.vm.box = 'dummy'
-
-    # Authentication creds, server details, etc.
-    rs.username = 'testuser'
-    rs.api_key = 'testkey'
-    rs.rackspace_region = 'lon'
+    override.vm.box_url = 'https://github.com/mitchellh/vagrant-rackspace/raw/master/dummy.box'
+    rs.username = ENV['OS_USERNAME']
+    rs.api_key  = ENV['OS_API_KEY']
+    rs.rackspace_region = ENV.fetch('OS_REGION_NAME', :lon).downcase.to_sym
+    rs.public_key_path = File.expand_path("~/.ssh/id_rsa.pub")
+    #rs.key_name = 
+    override.ssh.username = 'root'
+    override.ssh.private_key_path = ENV['VAGRANT_SSH_PRIVATE_KEY_PATH'] || "~/.ssh/id_rsa"
     rs.server_name = config.vm.hostname
-    rs.flavor = /1 GB Performance/
-    rs.image = /Ubuntu 12.04 LTS/
+    #rs.key_name = 'rax'
+    rs.flavor   = /2 GB Performance/
+    rs.image    = /CentOS 6.5/
     rs.disk_config = 'MANUAL'
-    rs.key_name = 'rax'
+#    rs.metadata = {
+#      'expire-on' => (Date.today + 30).to_s
+#    }
   end
 
   config.vm.provider :aws do |aws, override|
@@ -81,9 +90,10 @@ Vagrant.configure('2') do |config|
   # See http://docs.mongodb.org/manual/administration/production-notes/ for
   # details.
   config.vm.provision :chef_solo do |chef|
+    chef.add_recipe 'yum'
     chef.add_recipe 'utils'
     chef.add_recipe 'mosh'
-    chef.add_recipe 'ebs'
+   # chef.add_recipe 'ebs'
     chef.add_recipe 'mongodb::10gen_repo'
     chef.add_recipe 'mongodb'
 
