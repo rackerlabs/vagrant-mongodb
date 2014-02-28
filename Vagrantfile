@@ -93,7 +93,7 @@ Vagrant.configure('2') do |config|
     #chef.add_recipe 'yum'
     chef.add_recipe 'yum-epel'
     chef.add_recipe 'utils'
-    chef.add_recipe 'mosh'
+    #chef.add_recipe 'mosh'
    # chef.add_recipe 'ebs'
     chef.add_recipe 'mongodb::10gen_repo'
     chef.add_recipe 'mongodb'
