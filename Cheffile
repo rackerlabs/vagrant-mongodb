@@ -5,6 +5,6 @@ cookbook "mongodb",
     :git => "git://github.com/edelight/chef-mongodb.git"
 cookbook "mosh",
     :git => "git://github.com/jtimberman/mosh-cookbook"
-cookbook "utils"
+cookbook "utils",
     :path => "my_cookbooks/utils"
 cookbook "yum"
