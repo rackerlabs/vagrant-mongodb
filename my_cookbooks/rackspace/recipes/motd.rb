@@ -1,5 +1,5 @@
-cookbook_file 'motd.tail' do
-  path  '/etc/motd.tail'
+cookbook_file 'motd' do
+  path  '/etc/motd'
   owner 'root'
   group 'root'
   mode  '0444'

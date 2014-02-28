@@ -19,8 +19,10 @@ Vagrant.configure('2') do |config|
   config.ssh.pty = true
 
   config.vm.provider "virtualbox" do |v, override|
-    v.memory = 1024
-    override.vm :host_shell, inline: 'echo "Provider=virtualbox"'
+    override.vm.box = 'precise32'
+    v.memory = 512
+    v.gui = true
+    chef_cookbooks = [ "rackspace::motd" ]
   end
 
   ### RAX provider settings
@@ -43,9 +45,8 @@ Vagrant.configure('2') do |config|
 #    rs.metadata = {
 #      'expire-on' => (Date.today + 30).to_s
 #    }
-    override.vm :host_shell, inline: 'cat /etc/motd.tail'
     # Chef cookbooks needed for our execution
-    chef_cookbooks = [ "rackspace::mount", "rackspace::motd" ]
+    chef_cookbooks = [ "rackspace::partition", "rackspace::motd" ]
   end
 
   config.vm.provider :aws do |aws, override|
@@ -105,8 +106,12 @@ Vagrant.configure('2') do |config|
 
     # Add any predefined cookbooks
     chef_cookbooks.each do |chef_cookbook|
+        puts chef_cookbook
         chef.add_recipe chef_cookbook
     end
+
+    chef.add_recipe 'rackspace::motd'
+    chef.add_recipe 'rackspace::partition'
     chef.add_recipe 'yum-epel'
     chef.add_recipe 'utils'
     chef.add_recipe 'mongodb::10gen_repo'
