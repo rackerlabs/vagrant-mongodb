@@ -11,6 +11,9 @@ Vagrant.configure('2') do |config|
 
   config.omnibus.chef_version = :latest
 
+  # Initialize variables
+  chef_cookbooks = []
+
   # Workaround for "sudo: sorry, you must have a tty to run sudo" error. See
   # https://github.com/mitchellh/vagrant/issues/1482 for details.
   config.ssh.pty = true
@@ -40,6 +43,8 @@ Vagrant.configure('2') do |config|
 #      'expire-on' => (Date.today + 30).to_s
 #    }
     override.vm :host_shell, inline: 'cat /etc/motd.tail'
+    # Chef cookbooks needed for our execution
+    chef_cookbooks = [ "rackspace::mount", "rackspace::motd" ]
   end
 
   config.vm.provider :aws do |aws, override|
@@ -90,25 +95,17 @@ Vagrant.configure('2') do |config|
     override.ssh.username         = 'ec2-user'
     override.ssh.private_key_path = ENV['VAGRANT_SSH_PRIVATE_KEY_PATH'] ||
                                     "~/aws/keys/#{aws_region}/#{ENV['USER']}.pem"
+    chef_cookbooks = [ "ebs" ]
   end
 
   # See http://docs.mongodb.org/manual/administration/production-notes/ for
   # details.
   config.vm.provision :chef_solo do |chef|
-    puts ENV['VAGRANT_DEFAULT_PROVIDER']
-    puts "Vagrant provider"
-    if ENV['VAGRANT_DEFAULT_PROVIDER'] == :rackspace
-        puts "Loading Rackspace specific recipes"
-        chef.add_recipe 'rackspace'
-        chef.add_recipe 'utils'
-        chef.add_recipe 'mongodb::10gen_repo'
-        chef.add_recipe 'mongodb'
-    end
 
-    if ENV['VAGRANT_DEFAULT_PROVIDER'] == :aws
-        chef.add_recipe 'ebs'
+    # Add any predefined cookbooks
+    chef_cookbooks.each do |chef_cookbook|
+        chef.add_recipe chef_cookbook
     end
-
     chef.add_recipe 'yum-epel'
     chef.add_recipe 'utils'
     chef.add_recipe 'rackspace'
