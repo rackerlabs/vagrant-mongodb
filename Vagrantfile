@@ -18,8 +18,9 @@ Vagrant.configure('2') do |config|
   # https://github.com/mitchellh/vagrant/issues/1482 for details.
   config.ssh.pty = true
 
-  config.vm.provider "virtualbox" do |v|
+  config.vm.provider "virtualbox" do |v, override|
     v.memory = 1024
+    override.vm :host_shell, inline: 'echo "Provider=virtualbox"'
   end
 
   ### RAX provider settings
@@ -108,7 +109,6 @@ Vagrant.configure('2') do |config|
     end
     chef.add_recipe 'yum-epel'
     chef.add_recipe 'utils'
-    chef.add_recipe 'rackspace'
     chef.add_recipe 'mongodb::10gen_repo'
     chef.add_recipe 'mongodb'
 

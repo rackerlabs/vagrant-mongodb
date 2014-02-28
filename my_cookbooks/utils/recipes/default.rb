@@ -36,10 +36,3 @@ cookbook_file 'public_ip' do
   group 'root'
   mode  '0755'
 end
-
-directory "/data" do
-    owner "root"
-    group "root"
-    mode 0755
-    action :create
-end
