@@ -35,6 +35,7 @@ Vagrant.configure('2') do |config|
 #    rs.metadata = {
 #      'expire-on' => (Date.today + 30).to_s
 #    }
+    override.vm :host_shell, inline: 'cat /etc/motd.tail'
   end
 
   config.vm.provider :aws do |aws, override|
