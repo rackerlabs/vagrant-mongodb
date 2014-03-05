@@ -1,8 +1,11 @@
-# -*- mode: ruby -*-
+# -* mode: ruby -*-
 # vi: set ft=ruby :
+
+default_hostname = "mongodb" + "-" + (0...8).map { (65 + rand(26)).chr }.join
 
 Vagrant.configure('2') do |config|
   config.vm.box     = 'dummy'
+  config.vm.hostname = default_hostname
 #  config.vm.box_url = 'https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box'
 
   # Librarian-Chef is in use, add a reminder
@@ -33,10 +36,10 @@ Vagrant.configure('2') do |config|
     rs.username = ENV['OS_USERNAME']
     rs.api_key  = ENV['OS_PASSWORD']
     rs.rackspace_region = ENV.fetch('OS_REGION_NAME', :lon).downcase.to_sym
-    rs.public_key_path = File.expand_path("~/.ssh/id_rsa.pub")
+    rs.public_key_path = ENV.fetch('VAGRANT_SSH_PUBLIC_KEY_PATH', File.expand_path("~/.ssh/id_rsa.pub"))
     #rs.key_name = 
     override.ssh.username = 'root'
-    override.ssh.private_key_path = ENV['VAGRANT_SSH_PRIVATE_KEY_PATH'] || "~/.ssh/id_rsa"
+    override.ssh.private_key_path = ENV.fetch('VAGRANT_SSH_PRIVATE_KEY_PATH', File.expand_path("~/.ssh/id_rsa"))
     rs.server_name = config.vm.hostname
     #rs.key_name = 'rax'
     rs.flavor   = /2 GB Performance/
