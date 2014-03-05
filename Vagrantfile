@@ -31,7 +31,7 @@ Vagrant.configure('2') do |config|
     override.vm.box = 'dummy'
     override.vm.box_url = 'https://github.com/mitchellh/vagrant-rackspace/raw/master/dummy.box'
     rs.username = ENV['OS_USERNAME']
-    rs.api_key  = ENV['OS_API_KEY']
+    rs.api_key  = ENV['OS_PASSWORD']
     rs.rackspace_region = ENV.fetch('OS_REGION_NAME', :lon).downcase.to_sym
     rs.public_key_path = File.expand_path("~/.ssh/id_rsa.pub")
     #rs.key_name = 
