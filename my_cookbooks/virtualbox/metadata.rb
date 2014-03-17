@@ -1,0 +1,6 @@
+name             "virtualbox"
+maintainer       "Marc Cluet & Sean Roberts"
+maintainer_email "marc.cluet@rackspace.com, sean.roberts@rackspace.com"
+description      "Rackspace"
+version          "0.0.1"
+license          "Apache2"

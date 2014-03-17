@@ -4,28 +4,26 @@
 default_hostname = "mongodb" + "-" + (0...8).map { (65 + rand(26)).chr }.join
 
 Vagrant.configure('2') do |config|
-  config.vm.box     = 'dummy'
-  config.vm.hostname = default_hostname
-#  config.vm.box_url = 'https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box'
-
   # Librarian-Chef is in use, add a reminder
   Vagrant.require_plugin 'vagrant-librarian-chef'
   Vagrant.require_plugin 'vagrant-omnibus'
+  Vagrant.require_plugin 'vagrant-vbguest'
 
   config.omnibus.chef_version = :latest
 
   # Initialize variables
   chef_cookbooks = []
+  config.vm.hostname = default_hostname
 
   # Workaround for "sudo: sorry, you must have a tty to run sudo" error. See
   # https://github.com/mitchellh/vagrant/issues/1482 for details.
   config.ssh.pty = true
 
   config.vm.provider "virtualbox" do |v, override|
-    override.vm.box = 'precise32'
-    v.memory = 512
-    v.gui = true
-    chef_cookbooks = [ "rackspace::motd" ]
+    override.vm.box = 'centos65-64-mongodb'
+    override.vm.box_url = "http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.5-i386-v20140311.box"
+    v.memory = 1024
+    chef_cookbooks = [ "virtualbox::partition", "rackspace::motd" ]
   end
 
   ### RAX provider settings
